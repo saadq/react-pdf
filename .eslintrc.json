@@ -1,9 +1,37 @@
 {
-  "extends": "wojtekmaj/react",
-  "parser": "babel-eslint",
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "wojtekmaj/react",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/typescript"
+  ],
+  "settings": {
+    "import/resolver": {
+       "node": {
+          "extensions": [".js", ".jsx", ".ts", ".tsx"],
+          "moduleDirectory": ["node_modules", "src/"]
+        }
+    }
+  },
   "rules": {
     "no-underscore-dangle": ["error", { "allow": ["_pdfInfo", "_pageIndex", "_pageInfo"] }],
-    "react/sort-comp": "off"
+    "react/sort-comp": "off",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": "error",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+   ]
   },
   "overrides": [
     {
@@ -13,6 +41,18 @@
       ],
       "rules": {
         "import/no-unresolved": "off"
+      }
+    },
+    {
+      "files": [
+        "**/*.js",
+        "**/*.jsx"
+      ],
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/no-this-alias": "off",
+        "@typescript-eslint/no-use-before-define": "off"
       }
     }
   ]

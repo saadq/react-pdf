@@ -1,5 +1,14 @@
+interface Props {
+  num: number
+  gen: number
+}
+
 export default class Ref {
-  constructor({ num, gen }) {
+  num: Props['num'];
+
+  gen: Props['gen'];
+
+  constructor({ num, gen }: Props) {
     this.num = num;
     this.gen = gen;
   }
