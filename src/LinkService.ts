@@ -15,18 +15,31 @@
 
 /* eslint-disable class-methods-use-this, no-empty-function */
 
+import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api';
+import { PDFViewer, TEMPORARY_ANY } from './shared/types';
+
 export default class LinkService {
+  externalLinkTarget: null;
+
+  externalLinkRel: null;
+
+  externalLinkEnabled: boolean;
+
+  pdfDocument?: PDFDocumentProxy;
+
+  pdfViewer?: PDFViewer;
+
   constructor() {
     this.externalLinkTarget = null;
     this.externalLinkRel = null;
     this.externalLinkEnabled = true;
   }
 
-  setDocument(pdfDocument) {
+  setDocument(pdfDocument: PDFDocumentProxy) {
     this.pdfDocument = pdfDocument;
   }
 
-  setViewer(pdfViewer) {
+  setViewer(pdfViewer: PDFViewer) {
     this.pdfViewer = pdfViewer;
   }
 
@@ -37,11 +50,13 @@ export default class LinkService {
   }
 
   get page() {
-    return this.pdfViewer.currentPageNumber;
+    return this.pdfViewer?.currentPageNumber;
   }
 
   set page(value) {
-    this.pdfViewer.currentPageNumber = value;
+    if (this.pdfViewer) {
+      this.pdfViewer.currentPageNumber = value;
+    }
   }
 
   get rotation() {
@@ -50,10 +65,10 @@ export default class LinkService {
 
   set rotation(value) {}
 
-  goToDestination(dest) {
+  goToDestination(dest: TEMPORARY_ANY) {
     new Promise((resolve) => {
       if (typeof dest === 'string') {
-        this.pdfDocument.getDestination(dest).then(resolve);
+        this.pdfDocument?.getDestination(dest).then(resolve);
       } else if (Array.isArray(dest)) {
         resolve(dest);
       } else {
@@ -69,7 +84,7 @@ export default class LinkService {
 
         new Promise((resolve) => {
           if (destRef instanceof Object) {
-            this.pdfDocument.getPageIndex(destRef)
+            this.pdfDocument?.getPageIndex(destRef)
               .then((pageIndex) => {
                 resolve(pageIndex + 1);
               })
@@ -83,18 +98,22 @@ export default class LinkService {
           }
         })
           .then((pageNumber) => {
-            if (!pageNumber || pageNumber < 1 || pageNumber > this.pagesCount) {
+            if (
+              !pageNumber
+              || (pageNumber as number) < 1
+              || (pageNumber as number) > this.pagesCount
+            ) {
               throw new Error(`"${pageNumber}" is not a valid page number.`);
             }
 
-            this.pdfViewer.scrollPageIntoView({
-              pageNumber,
+            this.pdfViewer?.scrollPageIntoView({
+              pageNumber: pageNumber as number,
             });
           });
       });
   }
 
-  navigateTo(dest) {
+  navigateTo(dest: TEMPORARY_ANY) {
     this.goToDestination(dest);
   }
 
